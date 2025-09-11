@@ -1,0 +1,8 @@
+﻿<!doctype html><title>Week 5 Auth Report</title><body>
+<h1>Week 5 – Auth & Session Findings (Juice-Shop)</h1>
+<pre id=r></pre>
+<script>
+fetch('auth_report.json')
+  .then(r=>r.json())
+  .then(j=>document.getElementById('r').textContent=JSON.stringify(j,null,2));
+</script>

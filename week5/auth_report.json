@@ -1,0 +1,26 @@
+﻿{
+    "logout_invalid.json":  {
+                                "logged_in_before":  false,
+                                "session_still_valid_after_logout":  false
+                            },
+    "session_audit.json":  {
+                               "pre_login_sid":  "ATTACKER_FIXATION_TOKEN",
+                               "post_login_sid":  "ATTACKER_FIXATION_TOKEN",
+                               "fixated":  true,
+                               "cookies":  [
+                                               {
+                                                   "name":  "connect.sid",
+                                                   "secure":  false,
+                                                   "httponly":  false,
+                                                   "samesite":  null
+                                               }
+                                           ],
+                               "timestamp":  "2025-09-11 17:00:23.054912"
+                           },
+    "weak_creds.json":  {
+                            "working_creds":  [
+
+                                              ],
+                            "timestamp":  "2025-09-11 17:00:16.024758"
+                        }
+}
