@@ -7,7 +7,7 @@ from helpers import normalize_url, is_same_domain
 
 
 class SingleDomainCrawler:
-    def __init__(self, base_url: str, max_pages=100, delay=1, session=None):
+    def __init__(self, base_url: str, max_pages=100, delay=1, session=None, login_url=None, login_data=None):
         self.base = normalize_url(base_url)
         self.max_pages = max_pages
         self.delay = delay
@@ -15,6 +15,8 @@ class SingleDomainCrawler:
         self.session.headers.update(
             {"User-Agent": "single-domain-crawler/1.0 (+https://github.com/arinpodder)"}
         )
+        self.login_url = login_url
+        self.login_data = login_data
 
         self.visited = set()
         self.queue = [self.base]
@@ -53,10 +55,19 @@ class SingleDomainCrawler:
     # ----------------------------------------------------
     def crawl(self):
         """Start the crawl and return collected data."""
+        if self.login_url and self.login_data:
+            try:
+                login_resp = self.session.post(self.login_url, data=self.login_data, timeout=10)
+                login_resp.raise_for_status()
+                print(f"Logged in successfully to {self.login_url}")
+            except Exception as e:
+                print(f"Login failed: {e}")
+                return {"pages": {}, "forms": {}}
+
         while self.queue and len(self.visited) < self.max_pages:
             url = self.queue.pop(0)
             url = normalize_url(url)
-            if url in self.visited or not is_same_domain(self.base, url):
+            if url in self.visited:
                 continue
 
             try:
@@ -96,9 +107,18 @@ if __name__ == "__main__":
     parser.add_argument("--max", type=int, default=50, help="Max pages to fetch")
     parser.add_argument("--delay", type=float, default=1.0, help="Politeness delay (s)")
     parser.add_argument("--out", default=".", help="Folder to save results")
+    parser.add_argument("--login-url", help="Login URL for authentication")
+    parser.add_argument("--login-data", help="Login data as key=value&key2=value2")
 
     args = parser.parse_args()
-    crawler = SingleDomainCrawler(args.url, max_pages=args.max, delay=args.delay)
+
+    login_data = None
+    if args.login_data:
+        # parse login_data string into dict
+        login_data = dict(item.split("=") for item in args.login_data.split("&"))
+
+    crawler = SingleDomainCrawler(args.url, max_pages=args.max, delay=args.delay,
+                                  login_url=args.login_url, login_data=login_data)
     result = crawler.crawl()
 
     out = pathlib.Path(args.out)

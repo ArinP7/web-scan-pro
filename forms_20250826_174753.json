@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "https://quotes.toscrape.com/login": [
     {
@@ -27,4 +28,35 @@
       ]
     }
   ]
+=======
+{
+  "https://quotes.toscrape.com/login": [
+    {
+      "method": "POST",
+      "action": "https://quotes.toscrape.com/login",
+      "inputs": [
+        {
+          "type": "hidden",
+          "name": "csrf_token",
+          "value": "djhclRUDptqLGYwieWPIEufzJmbKFXTOoAxCVZyngSvHraMNBkQs"
+        },
+        {
+          "type": "text",
+          "name": "username",
+          "value": ""
+        },
+        {
+          "type": "password",
+          "name": "password",
+          "value": ""
+        },
+        {
+          "type": "submit",
+          "name": null,
+          "value": "Login"
+        }
+      ]
+    }
+  ]
+>>>>>>> 7e5a228 (Add XSS scanner module and improve crawler and scanner)
 }
