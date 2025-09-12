@@ -1,0 +1,3 @@
+{
+  "https://yourfavoritesite.com/": "<html>\n<head>\n<META NAME=\u00e2\u0080\u009dROBOTS\u00e2\u0080\u009d CONTENT=\u00e2\u0080\u009dNOINDEX, NOFOLLOW\u00e2\u0080\u009d>\n<style>\nbody {\n        color: white;\n}\n</style>\n</head>\n<title>It's your favorite site!</title>\n<body bgcolor=\"black\">\n\t<center>YOUR FAVORITE SITE</center>\n\t<br>\n\t<br>\n\t<center><img src=\"/photos/gnome-home.jpg\" alt=\"The gnomes are at home.\" width=\"800\" height=\"450\"></center>\n\t<br>\n\t<br>\n\t<center>&#169; 2018 Your Favorite Site</center>\n</body>\n</html>\n"
+}
