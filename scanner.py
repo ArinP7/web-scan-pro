@@ -22,8 +22,10 @@ def crawl_and_extract_forms(start_url, max_pages=25):
 
 # ----------------------------------------------------------
 class SQLiScanner:
-    def __init__(self, delay=0.1):
+    def __init__(self, delay=0.1, login_url=None, login_data=None):
         self.session = get_session()
+        self.login_url = login_url
+        self.login_data = login_data
         # --- DVWA session cookie ---
         self.session.headers.update({
             "Cookie": "PHPSESSID=01hr377u4lkib2aba5ufpusen4; security=low"
@@ -86,6 +88,14 @@ class SQLiScanner:
 
     def run(self, start_url, crawl=False):
         self.log(f"Starting scan on {start_url}")
+        if self.login_url and self.login_data:
+            try:
+                login_resp = self.session.post(self.login_url, data=self.login_data, timeout=10)
+                login_resp.raise_for_status()
+                self.log(f"Logged in successfully to {self.login_url}")
+            except Exception as e:
+                self.log(f"Login failed: {e}")
+                return []
         self.test_url_params(start_url)
         if crawl:
             forms = crawl_and_extract_forms(start_url)
@@ -101,9 +111,15 @@ if __name__ == "__main__":
                         help="Spider and test forms")
     parser.add_argument("--delay", type=float, default=0.1,
                         help="Seconds between requests")
+    parser.add_argument("--login-url", help="Login URL for authentication")
+    parser.add_argument("--login-data", help="Login data as key=value&key2=value2")
     args = parser.parse_args()
 
-    scanner = SQLiScanner(delay=args.delay)
+    login_data = None
+    if args.login_data:
+        login_data = dict(item.split("=") for item in args.login_data.split("&"))
+
+    scanner = SQLiScanner(delay=args.delay, login_url=args.login_url, login_data=login_data)
     results = scanner.run(args.url, crawl=args.crawl)
     print("\n=== RESULTS ===")
     print(json.dumps(results, indent=2))

@@ -45,6 +45,9 @@ os.makedirs(SCREEN_DIR, exist_ok=True)
 parser = argparse.ArgumentParser()
 parser.add_argument("--visible", action="store_true", help="show browser for demo")
 parser.add_argument("target", nargs="?", default="http://localhost:3000", help="target base URL")
+parser.add_argument("--login-url", help="Login URL for authentication")
+parser.add_argument("--username", help="Username for login")
+parser.add_argument("--password", help="Password for login")
 args = parser.parse_args()
 
 def load_payloads():
@@ -64,12 +67,16 @@ def capture(driver, url):
     driver.save_screenshot(path)
     return path
 
-def run_scan(base_url):
+def run_scan(base_url, login_url=None, username=None, password=None):
     payloads = DEFAULT_PAYLOADS          # use the big list
     findings = []
 
     # ---- crawl ----
-    bot = SingleDomainCrawler(base_url)
+    if login_url and username and password:
+        login_data = {"username": username, "password": password}
+        bot = SingleDomainCrawler(base_url, login_url=login_url, login_data=login_data)
+    else:
+        bot = SingleDomainCrawler(base_url)
     bot.crawl()
     endpoints = {
         "params": {url: ["id"] for url in bot.pages.keys()},
@@ -175,4 +182,4 @@ def run_scan(base_url):
     return findings
 
 if __name__ == "__main__":
-    run_scan(args.target)
+    run_scan(args.target, args.login_url, args.username, args.password)
