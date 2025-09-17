@@ -1,0 +1,6 @@
+﻿<!doctype html><title>Week 6 IDOR Report</title><body>
+<h1>Week 6 – Access-Control / IDOR Findings (Juice-Shop)</h1>
+<pre id=r></pre>
+<script>
+fetch('idor_report.json').then(r=>r.json()).then(j=>document.getElementById('r').textContent=JSON.stringify(j,null,2));
+</script>
