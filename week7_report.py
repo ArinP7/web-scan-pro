@@ -6,19 +6,39 @@ import dominate.tags as t
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-def load_findings(results_dir):
+def load_findings():
     findings = []
-    for filename in os.listdir(results_dir):
-        if filename.endswith(".json"):
-            filepath = os.path.join(results_dir, filename)
-            with open(filepath, "r", encoding="utf-8") as f:
+    # Load vulnerability scan results from specific files
+    vuln_files = ['weak_creds.json', 'session_audit.json', 'logout_invalid.json']
+    for filename in vuln_files:
+        if os.path.exists(filename):
+            with open(filename, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                # If data is a list of dicts, extend findings
-                if isinstance(data, list):
-                    findings.extend(data)
-                else:
-                    # If data is a single string or dict, append it
-                    findings.append(data)
+                if filename == 'weak_creds.json':
+                    if data.get('working_creds'):
+                        for cred in data['working_creds']:
+                            findings.append({
+                                'type': 'Weak Credentials',
+                                'url': 'N/A',
+                                'severity': 'High',
+                                'mitigation': 'Use strong, unique passwords and implement password policies.'
+                            })
+                elif filename == 'session_audit.json':
+                    if data.get('fixated'):
+                        findings.append({
+                            'type': 'Session Fixation',
+                            'url': 'N/A',
+                            'severity': 'High',
+                            'mitigation': 'Regenerate session ID after login and use secure session management.'
+                        })
+                elif filename == 'logout_invalid.json':
+                    if data.get('session_still_valid_after_logout'):
+                        findings.append({
+                            'type': 'Invalid Logout',
+                            'url': 'N/A',
+                            'severity': 'Medium',
+                            'mitigation': 'Ensure session is invalidated upon logout.'
+                        })
     return findings
 
 def severity_level(severity):
@@ -91,8 +111,7 @@ def save_report(findings, outfile):
         f.write(str(doc))
 
 if __name__ == "__main__":
-    results_dir = "results"
     output_file = "reports/week7_security_report.html"
-    findings = load_findings(results_dir)
+    findings = load_findings()
     save_report(findings, output_file)
     print(f"Week 7 security report generated: {output_file}")
